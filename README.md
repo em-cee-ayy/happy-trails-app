@@ -5,7 +5,7 @@ built with love, coffee, and a little motivation from our 4-legged baby 🐶🌲
 
 ---
 
-## 🌟 what is happy tails ai?
+## 🌟 what is happy trails ai?
 
 **happy tails ai** is your real-time hiking sidekick - blending trail safety, personalized recommendations, and ai-enhanced nature awareness.  
 think: alltrails x waze x nature detective, with trail alerts and community vibes.
