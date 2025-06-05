@@ -10,7 +10,7 @@ export default function TabLayout() {
   return (
     <Tabs>
       <Tabs.Screen name="index" options={{ title: "home", tabBarIcon: () => "🏡" }} />
-      <Tabs.Screen name="home" options={{ title: "test", tabBarIcon: () => "🏠" }} />
+      <Tabs.Screen name="history" options={{ title: "test", tabBarIcon: () => "🌲" }} />
       <Tabs.Screen name="trails" options={{ title: "trails", tabBarIcon: () => "🥾" }} />
       <Tabs.Screen name="alerts" options={{ title: "alerts", tabBarIcon: () => "⚠️" }} />
     </Tabs>
