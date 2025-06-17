@@ -1,5 +1,4 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
 import { Text } from 'react-native'; // 💡 don't forget this!
 
 import { useColorScheme } from '@/hooks/useColorScheme';
