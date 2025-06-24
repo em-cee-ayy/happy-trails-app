@@ -13,5 +13,8 @@ module.exports = defineConfig([
         },
       },
     },
+    rules: {
+      'import/no-unresolved': 'off', // turn off this specific rule
+    },
   },
 ]);

@@ -1,26 +1,70 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack, useRouter, useSegments } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import "react-native-reanimated";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+export { ErrorBoundary } from "expo-router";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  const [loaded, error] = useFonts({
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
+  useEffect(() => {
+    if (error) throw error;
+  }, [error]);
+
+  return (
+    <>
+      {/* Keep splash screen until fonts load */}
+      {!loaded && <Stack.Screen options={{ headerShown: false }} />}
+      {loaded && (
+        <AuthProvider>
+          <RootLayoutNav />
+        </AuthProvider>
+      )}
+    </>
+  );
+}
+
+function RootLayoutNav() {
+  const { user, isLoading } = useAuth();
+  // Treat segments as strings for comparison
+  const segments = useSegments() as unknown as string[];
+  const router = useRouter();
+  const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const inAuthGroup = segments[0] === "(auth)";
+
+    if (!user && !inAuthGroup) {
+      // @ts-ignore: bypass route string union mismatch
+      router.replace("/(auth)/login");
+    } else if (user && inAuthGroup) {
+      // @ts-ignore: bypass route string union mismatch
+      router.replace("/(tabs)");
+    }
+  }, [user, isLoading, segments, router]);
+
+  if (isLoading) {
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

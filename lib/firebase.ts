@@ -1,8 +1,7 @@
-import auth from '@react-native-firebase/auth';
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// 🔐 your Firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyBfI8wi9AwM_9GMjresYynUWG9ax6uAAYY",
     authDomain: "happy-trails-ai.firebaseapp.com",
@@ -13,11 +12,10 @@ const firebaseConfig = {
     measurementId: "G-X03HF65FDC"
 };
 
-// 🧠 initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+// 👇 simple memory-only auth (no RN persistence)
+export const auth = getAuth(app);
 
-// 🔐 initialize auth
-// with @react-native-firebase/auth, initialization is handled automatically
+// 👇 your Firestore instance
 export const db = getFirestore(app);
-export { auth };
