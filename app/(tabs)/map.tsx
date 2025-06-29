@@ -1,9 +1,8 @@
+import { View, Text, StyleSheet } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import { collection, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
-import MapView, { Marker, Polyline } from "react-native-maps";
-
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
 type Sighting = {
@@ -12,26 +11,20 @@ type Sighting = {
   location: { lat: number; lng: number };
 };
 
-export default function MapScreen() {
-  const [sightings, setSightings] = useState<Sighting[]>([]);
+export default function Map() {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
     null
   );
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // 🧭 Get user's current location
+  const [sightings, setSightings] = useState<Sighting[]>([]);
+
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        Alert.alert(
-          "Permission denied",
-          "Please allow location access to see the map."
-        );
+        // Optional: set an error state or alert
         return;
       }
-
       const loc = await Location.getCurrentPositionAsync({});
       setLocation({
         lat: loc.coords.latitude,
@@ -40,7 +33,6 @@ export default function MapScreen() {
     })();
   }, []);
 
-  // 🔁 Fetch real-time sightings from Firestore
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "sightings"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
@@ -53,27 +45,18 @@ export default function MapScreen() {
     return () => unsubscribe();
   }, []);
 
-  // 🌲 Example trail (future: GPS-tracked or from Firestore)
-  const exampleTrail = [
-    { latitude: 40.01, longitude: -105.25 },
-    { latitude: 40.011, longitude: -105.251 },
-    { latitude: 40.012, longitude: -105.252 },
-  ];
-
   if (!location) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.text}>
-          {errorMsg ?? "Loading map... please wait 🌍"}
-        </Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Loading your location...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
       <MapView
-        style={styles.map}
+        style={{ flex: 1 }}
         showsUserLocation={true}
         initialRegion={{
           latitude: location.lat,
@@ -82,22 +65,6 @@ export default function MapScreen() {
           longitudeDelta: 0.05,
         }}
       >
-        {/* 🟢 Optional: trail path */}
-        <Polyline
-          coordinates={exampleTrail}
-          strokeColor="#6b8e23"
-          strokeWidth={4}
-        />
-
-        {/* 📍 Trailhead (example) */}
-        <Marker
-          coordinate={{ latitude: 40.01, longitude: -105.25 }}
-          title="Trailhead"
-          description="Start of the trail"
-          pinColor="green"
-        />
-
-        {/* 🔥 Live Sightings */}
         {sightings.map((sighting) => (
           <Marker
             key={sighting.id}
@@ -118,7 +85,6 @@ export default function MapScreen() {
   );
 }
 
-// 🐾 Map icon to emoji
 function getSightingIcon(type: string) {
   const icons: Record<string, string> = {
     rattlesnake: "🐍",
@@ -129,23 +95,3 @@ function getSightingIcon(type: string) {
   };
   return icons[type] || "❓";
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    width: "100%",
-    height: "100%",
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  text: {
-    fontSize: 16,
-    color: "#333",
-  },
-});
