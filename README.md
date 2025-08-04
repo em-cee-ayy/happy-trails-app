@@ -53,28 +53,52 @@ think: alltrails x waze x nature detective, with trail alerts and community vibe
 ## 📁 repo structure
 
 ```
-happy-tails-ai/
+happy-trails-ai/
 │
-├── client/                   # React Native frontend
-│   ├── components/
-│   └── screens/
+├── client/                   # React Native (Expo) frontend
+│   ├── app/                  # Expo Router structure
+│   │   ├── (tabs)/           # Tab navigation screens
+│   │   │   ├── index.tsx     # Home screen
+│   │   │   ├── map.tsx
+│   │   │   ├── report.tsx
+│   │   │   └── ...other tabs
+│   │   ├── (auth)/           # Auth stack
+│   │   │   └── login.tsx
+│   │   ├── +not-found.tsx
+│   │   ├── trail-detail.tsx
+│   │   ├── _layout.tsx       # Root layout (auth + tabs logic)
+│   │
+│   ├── components/           # Reusable UI components
+│   ├── context/              # Global context providers (e.g., AuthContext)
+│   ├── lib/                  # Firebase config, helper utils, constants
+│   │   ├── firebase.ts
+│   │   └── ...more utils
+│   ├── hooks/                # Custom hooks
+│   ├── assets/               # Fonts, images, icons
+│   │   └── fonts/
+│   └── package.json
 │
 ├── server/                   # Express backend
 │   ├── routes/
 │   ├── controllers/
-│   └── models/
+│   ├── models/
+│   ├── config/
+│   │   └── firebaseAdmin.ts  # Admin SDK if needed
+│   └── server.js or index.js
 │
-├── ai/                       # AI models & helpers
+├── ai/                       # AI models & logic
 │   ├── sound_detection/
 │   └── recommendation/
 │
-├── db/                       # Database schema + seed
-│   └── schema.sql
+├── db/                       # Database schema + seeds
+│   ├── schema.sql
+│   └── seed.js
 │
-├── public/                   # Static files & assets
+├── public/                   # Static files & public assets
 │
-├── .env.example              # Environment variables template
-├── README.md                 # You're here :)
+├── .env                     # Your actual env file (gitignored)
+├── .env.example             # Template for contributors
+├── README.md                # Project overview
 └── LICENSE
 ```
 
